@@ -87,8 +87,8 @@ int main(void)
                         {
                          TFC_Ticker[0] = 0;
                          LineScanImageReady=0;
-                         //TERMINAL_PRINTF("\r\n");
-                         //TERMINAL_PRINTF("L:");
+                         TERMINAL_PRINTF("\r\n");
+                         TERMINAL_PRINTF("L:");
                          
                             if(t==0)
                                t=3;
@@ -98,7 +98,7 @@ int main(void)
                             TFC_SetBatteryLED_Level(t);
                            
                             for(i=0;i<128;i++){
-                                      	   //TERMINAL_PRINTF("%x,",LineScanImage0[i]);
+                                      	   TERMINAL_PRINTF("%x,",LineScanImage0[i]);
                                       	   //x hexa, i integer, f float......
                                       	   if(LineScanImage0[i]<ana){
                                       		   ana = LineScanImage0[i];
@@ -110,14 +110,14 @@ int main(void)
                                          //TERMINAL_PRINTF("%i",guardar);
                                          TFC_SetServo(0,(float)guardar/64.0f); //Rescale to -1.0 to 1.0
                                                         
-                        }
+                        
          TFC_HBRIDGE_ENABLE;
-         
-         if((float)guardar < -5 && (float)guardar > 5){
-        	 if(guardar < 0){
-        	 guardar = guardar*(-1);
-        	 }
-         TFC_SetMotorPWM((float)guardar/100.0f,(float)guardar/100.0f);
+         	 if((float)guardar < -5 && (float)guardar > 5){
+         		 TFC_SetMotorPWM((float)30/100.0f,(float)30/100.0f);
+         	 }
+         	 else {
+         		TFC_SetMotorPWM((float)50/100.0f,(float)50/100.0f);
+         	 }
          }
                    
             break;

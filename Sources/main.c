@@ -114,10 +114,10 @@ int main(void)
                                          TFC_SetServo(0,(float)guardar/64.0f); //Rescale to -1.0 to 1.0
                                         
                  if(guardar < -3 || guardar > 3){
-                  TFC_SetMotorPWM(30/100.0f,30/100.0f);
+                  TFC_SetMotorPWM(30/100.0f,30/100.0f); //al parecer 30 es lo ideal en la curva
                  }
                  else{
-                 TFC_SetMotorPWM(50/100.0f,50/100.0f);
+                 TFC_SetMotorPWM(50/100.0f,50/100.0f); //el ELSE era necesario, lo habiamos omitido
                  }
 
          /*
@@ -130,13 +130,10 @@ int main(void)
          		TERMINAL_PRINTF("\r\n");
          		TERMINAL_PRINTF("\r\n");
          		TERMINAL_PRINTF("%i",roberto/64);
-         		TERMINAL_PRINTF("\r\n");
-         		TERMINAL_PRINTF("\r\n");
-         		TERMINAL_PRINTF("%3.2f",roberto/64.0f);
          		*/
          }
                    
-            break; //wiii lo edite
+            break;
          }
    }
    

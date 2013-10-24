@@ -120,7 +120,7 @@ int main(void)
                  TFC_SetMotorPWM(50/100.0f,50/100.0f);
                  }
 
-         /*
+         /* 
          	 if(guardar < 0){
          		 guardar = guardar*(-1);
          	 }
@@ -130,9 +130,6 @@ int main(void)
          		TERMINAL_PRINTF("\r\n");
          		TERMINAL_PRINTF("\r\n");
          		TERMINAL_PRINTF("%i",roberto/64);
-         		TERMINAL_PRINTF("\r\n");
-         		TERMINAL_PRINTF("\r\n");
-         		TERMINAL_PRINTF("%3.2f",roberto/64.0f);
          		*/
          }
                    

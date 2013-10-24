@@ -136,7 +136,7 @@ int main(void)
          		*/
          }
                    
-            break;
+            break; //wiii lo edite
          }
    }
    

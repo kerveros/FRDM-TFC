@@ -5,6 +5,7 @@ int main(void)
 {
    uint32_t t,i=0, ana=0;
    int guardar,dato=0;
+   float roberto;
    //int32_t guardar;
    
    TFC_Init();
@@ -77,6 +78,8 @@ int main(void)
          
          case 3 :
         	 
+        	 TFC_HBRIDGE_ENABLE;
+        	 
         	 if(TFC_PUSH_BUTTON_0_PRESSED){
         	 dato=0;
         	 }
@@ -106,18 +109,31 @@ int main(void)
                                       	  }
                             }
                                          guardar = guardar - 64;
-                                         TERMINAL_PRINTF("\r\n");
+                                         //TERMINAL_PRINTF("\r\n");
                                          //TERMINAL_PRINTF("%i",guardar);
                                          TFC_SetServo(0,(float)guardar/64.0f); //Rescale to -1.0 to 1.0
-                                                        
-                        
-         TFC_HBRIDGE_ENABLE;
-         	 if((float)guardar < -5 && (float)guardar > 5){
-         		 TFC_SetMotorPWM((float)30/100.0f,(float)30/100.0f);
+                                        
+                 if(guardar < -3 || guardar > 3){
+                  TFC_SetMotorPWM(30/100.0f,30/100.0f);
+                 }
+                 else{
+                 TFC_SetMotorPWM(50/100.0f,50/100.0f);
+                 }
+
+         /*
+         	 if(guardar < 0){
+         		 guardar = guardar*(-1);
          	 }
-         	 else {
-         		TFC_SetMotorPWM((float)50/100.0f,(float)50/100.0f);
-         	 }
+         	 roberto = (float)guardar;
+         	roberto = roberto*(-0.02923) + 32;
+         		TFC_SetMotorPWM(roberto/64.0f,roberto/64.0f); // 0 a 1
+         		TERMINAL_PRINTF("\r\n");
+         		TERMINAL_PRINTF("\r\n");
+         		TERMINAL_PRINTF("%i",roberto/64);
+         		TERMINAL_PRINTF("\r\n");
+         		TERMINAL_PRINTF("\r\n");
+         		TERMINAL_PRINTF("%3.2f",roberto/64.0f);
+         		*/
          }
                    
             break;

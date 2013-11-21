@@ -3,28 +3,30 @@
 
 int main(void)
 {
-   uint32_t t,i=0, ana=0;
-   int guardar,dato=0;
-   float roberto;
+   uint32_t t,i=0, ana;
+   int guardar,dato=0, error=0,Output_setServo=0, Output_setServo_ant=0, kp=0.4, motor, motori, motord;
+   int mmotor_max, motor_min;
+   //int arreglo[128];
+   //run, y, Variable_contador=0
+   
    //int32_t guardar;
    
    TFC_Init();
    
    for(;;)
-   {      
-      //TFC_Task must be called in your main loop.  This keeps certain processing happy (I.E. Serial port queue check)
+	   
+   {
          TFC_Task();
 
-         //This Demo program will look at the middle 2 switch to select one of 4 demo modes.
-         //Let's look at the middle 2 switches
          switch(dato)
          {
          default:
          case 0 :
-        	 TFC_SetMotorPWM(0,0);
-        	 TFC_SetServo(0,0);
+                 TFC_SetMotorPWM(0,0);
+                 TFC_SetServo(0,0);
             //Demo mode 0 just tests the switches and LED's
             if(TFC_PUSH_BUTTON_1_PRESSED)
+            	//for(run=0; run<10000000; run++){} //2,500,000 1 seg
                dato=3;
             
             break;
@@ -47,7 +49,7 @@ int main(void)
                if(t>4)
                {
                   t=0;
-               }         
+               }
                TFC_SetBatteryLED_Level(t);
             }
             
@@ -71,74 +73,85 @@ int main(void)
                      if(t>4)
                      {
                         t=0;
-                     }         
+                     }
                   TFC_SetBatteryLED_Level(t);
                }
             break;
-         
-         case 3 :
-        	 
+       
+         case 3 :   
         	 TFC_HBRIDGE_ENABLE;
-        	 
-        	 if(TFC_PUSH_BUTTON_0_PRESSED){
-        	 dato=0;
-        	 }
-        	 
-         ana = 4096;
-    
-         if(TFC_Ticker[0]>100 && LineScanImageReady==1)
-                        {
-                         TFC_Ticker[0] = 0;
-                         LineScanImageReady=0;
-                         TERMINAL_PRINTF("\r\n");
-                         TERMINAL_PRINTF("L:");
-                         
-                            if(t==0)
-                               t=3;
-                            else
-                               t--;
-                            
-                            TFC_SetBatteryLED_Level(t);
-                           
-                            for(i=0;i<128;i++){
-                                      	   TERMINAL_PRINTF("%x,",LineScanImage0[i]);
-                                      	   //x hexa, i integer, f float......
-                                      	   if(LineScanImage0[i]<ana){
-                                      		   ana = LineScanImage0[i];
-                                      	   	   guardar = i;
-                                      	  }
-                            }
-                                         guardar = guardar - 64;
-                                         //TERMINAL_PRINTF("\r\n");
-                                         //TERMINAL_PRINTF("%i",guardar);
-                                         TFC_SetServo(0,(float)guardar/64.0f); //Rescale to -1.0 to 1.0
-                                        
-                 if(guardar < -3 || guardar > 3){
-                  TFC_SetMotorPWM(30/100.0f,30/100.0f);
-                 }
-                 else{
-                 TFC_SetMotorPWM(50/100.0f,50/100.0f);
-                 }
-
-         /*
-         	 if(guardar < 0){
-         		 guardar = guardar*(-1);
-         	 }
-         	 roberto = (float)guardar;
-         	roberto = roberto*(-0.02923) + 32;
-         		TFC_SetMotorPWM(roberto/64.0f,roberto/64.0f); // 0 a 1
-         		TERMINAL_PRINTF("\r\n");
-         		TERMINAL_PRINTF("\r\n");
-         		TERMINAL_PRINTF("%i",roberto/64);
-         		TERMINAL_PRINTF("\r\n");
-         		TERMINAL_PRINTF("\r\n");
-         		TERMINAL_PRINTF("%3.2f",roberto/64.0f);
-         		*/
-         }
-                   
-            break;
+                       
+             if(TFC_PUSH_BUTTON_0_PRESSED){
+            	 dato=0;
+             }
+                       
+             ana = 4096;
+           
+                if(TFC_Ticker[0]>100 && LineScanImageReady==1)
+                               {
+                                TFC_Ticker[0] = 0;
+                                LineScanImageReady=0;
+                               // TERMINAL_PRINTF("\r\n");
+                               // TERMINAL_PRINTF("L:");
+                                
+                                   if(t==0)
+                                      t=3;
+                                   else
+                                      t--;
+                                   
+                                   TFC_SetBatteryLED_Level(t);
+                                  
+                    /*              for(Variable_contador=0; Variable_contador<11; Variable_contador++){ 
+                                	 for(i=0;i<128;i++){
+                                	  arreglo[i]=(LineScanImage0[i]+arreglo[i]);   
+                                	  }                             
+                                  }
+                     
+                                 for(y=0;y<128;y++){                           
+                                             arreglo[y]=(arreglo[y])/10;
+                                             if(arreglo[y]<ana){
+                                                     ana=arreglo[y];
+                                                     guardar=y;
+                                                      
+                                             }
+                                                  
+                                   }
+                                   */
+                                 for(i=0;i<128;i++){
+                                   	   if(LineScanImage0[i]<ana){
+                                   		   ana = LineScanImage0[i];
+                                           guardar = i;
+                                       }
+                                 }
+                                  
+                                 
+                                guardar = kp*(guardar - 64);  //-1, 1
+                                motor = guardar;
+                                                
+                                TFC_SetServo(0,(float)guardar/64.0f);
+                                                
+                                /*Output_setServo = Output_setServo_ant + kp*(guardar - error);
+                                                
+                                error=guardar;
+                                Output_setServo =  Output_setServo_ant;
+                                                
+                                //TERMINAL_PRINTF("\r\n");
+                                //TERMINAL_PRINTF("%i",guardar);
+                                TFC_SetServo(0,(float)Output_setServo);
+                                */
+                        if(motor<0){
+                        	motori=motor/(kp*(-100));
+                        	motord=((kp*100)-motori);
+                        }
+                        
+                        motor = motor-(kp*100);
+                        TFC_SetMotorPWM((float)motor/kp*100, (float)40/kp*100);
+                        
+                         }
+                               break;
          }
    }
    
    return 0;
 }
+                         

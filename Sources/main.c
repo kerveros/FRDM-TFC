@@ -4,7 +4,8 @@
 int main(void)
 {
    uint32_t t,i=0, ana;
-   int guardar,dato=0, error=0,Output_setServo=0, Output_setServo_ant=0, kp=0.4, motor, motori, motord;
+   int guardar,dato=0;
+   float kp=0.4, kp_motor=0.8, motor;
    int mmotor_max, motor_min;
    //int arreglo[128];
    //run, y, Variable_contador=0
@@ -14,7 +15,7 @@ int main(void)
    TFC_Init();
    
    for(;;)
-	   
+      
    {
          TFC_Task();
 
@@ -26,7 +27,7 @@ int main(void)
                  TFC_SetServo(0,0);
             //Demo mode 0 just tests the switches and LED's
             if(TFC_PUSH_BUTTON_1_PRESSED)
-            	//for(run=0; run<10000000; run++){} //2,500,000 1 seg
+               //for(run=0; run<10000000; run++){} //2,500,000 1 seg
                dato=3;
             
             break;
@@ -79,10 +80,10 @@ int main(void)
             break;
        
          case 3 :   
-        	 TFC_HBRIDGE_ENABLE;
+            TFC_HBRIDGE_ENABLE;
                        
              if(TFC_PUSH_BUTTON_0_PRESSED){
-            	 dato=0;
+                dato=0;
              }
                        
              ana = 4096;
@@ -91,67 +92,36 @@ int main(void)
                                {
                                 TFC_Ticker[0] = 0;
                                 LineScanImageReady=0;
-                               // TERMINAL_PRINTF("\r\n");
-                               // TERMINAL_PRINTF("L:");
-                                
-                                   if(t==0)
-                                      t=3;
-                                   else
-                                      t--;
-                                   
-                                   TFC_SetBatteryLED_Level(t);
+                                TERMINAL_PRINTF("\r\n");
+                                TERMINAL_PRINTF("L:");
+                                for(i=0;i<128;i++)
+                                {
+                                   TERMINAL_PRINTF("%X,",LineScanImage0[i]);
+                                }
                                   
-                    /*              for(Variable_contador=0; Variable_contador<11; Variable_contador++){ 
-                                	 for(i=0;i<128;i++){
-                                	  arreglo[i]=(LineScanImage0[i]+arreglo[i]);   
-                                	  }                             
-                                  }
-                     
-                                 for(y=0;y<128;y++){                           
-                                             arreglo[y]=(arreglo[y])/10;
-                                             if(arreglo[y]<ana){
-                                                     ana=arreglo[y];
-                                                     guardar=y;
-                                                      
-                                             }
-                                                  
-                                   }
-                                   */
-                                 for(i=0;i<128;i++){
-                                   	   if(LineScanImage0[i]<ana){
-                                   		   ana = LineScanImage0[i];
+                                for(i=0;i<128;i++){
+                                         if(LineScanImage0[i]<ana){
+                                            ana = LineScanImage0[i];
                                            guardar = i;
                                        }
                                  }
-                                  
-                                 
-                                guardar = kp*(guardar - 64);  //-1, 1
                                 motor = guardar;
-                                                
+                                if (motor<64){
+                                   motor = (motor/64)*kp_motor;
+                                }
+                                else{
+                                   motor = ((127-motor)/64)*kp_motor;
+                                }
+                                  
+                                guardar = kp*(guardar - 64);  //-1, 1
                                 TFC_SetServo(0,(float)guardar/64.0f);
                                                 
-                                /*Output_setServo = Output_setServo_ant + kp*(guardar - error);
-                                                
-                                error=guardar;
-                                Output_setServo =  Output_setServo_ant;
-                                                
-                                //TERMINAL_PRINTF("\r\n");
-                                //TERMINAL_PRINTF("%i",guardar);
-                                TFC_SetServo(0,(float)Output_setServo);
-                                */
-                        if(motor<0){
-                        	motori=motor/(kp*(-100));
-                        	motord=((kp*100)-motori);
-                        }
-                        
-                        motor = motor-(kp*100);
-                        TFC_SetMotorPWM((float)motor/kp*100, (float)40/kp*100);
+                        TFC_SetMotorPWM(motor, motor);
                         
                          }
-                               break;
+            break;
          }
-   }
-   
+   }  
    return 0;
 }
-                         
+
